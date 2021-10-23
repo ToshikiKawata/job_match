@@ -141,5 +141,9 @@ return [
             'confirmPassword' => true,
         ]),
     ],
+    
+    'users' => [
+        'user', 'company'
+    ],
 
 ];
