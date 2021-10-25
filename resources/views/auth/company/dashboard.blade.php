@@ -1,6 +1,24 @@
+{{-- {{ dd($jobOffers)}} --}}
 <x-app-layout>
 <div class="container mx-auto w-3/5 my-8 px-4 py-4">
-        <div>
+        <div class="flex justify-end items-center mb-3">
+            <h4 class="text-gray-400 text-sm">公開状況</h4>
+            <ul class="flex">
+                @foreach (JobOfferConst::STATUS_LIST as $name => $value)
+                    <li class="ml-4">
+                        @if (strpos(url()->full(), 'status=' . $value) ||
+                            (!strpos(url()->full(), 'status') && JobOfferConst::STATUS_OPEN == $value))
+                            <a href="?status={{ $value }}" 
+                                class="hover:text-blue-500 text-green-500 font-bold">{{ $name }}</a>
+                        @else
+                            <a href="?status={{ $value }}"
+                                class="hover:text-blue-500">{{ $name }}</a>
+                        @endif
+                    </li>
+                @endforeach
+            </ul>
+        </div>
+    <div>
             @foreach ($jobOffers as $j)
                 <div class="bg-white w-full px-10 py-8 hover:shadow-2xl transition duration-500">
                     <div class="mt-4">

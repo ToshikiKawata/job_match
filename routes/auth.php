@@ -1,7 +1,7 @@
 <?php
 
-use App\Http\Controllers\CompanyController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\CompanyController;
 use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Str;
 use Laravel\Fortify\Features;

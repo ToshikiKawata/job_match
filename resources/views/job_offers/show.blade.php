@@ -33,21 +33,25 @@
                 @if (empty($entry))
                     <form action="{{ route('job_offers.entries.store', $jobOffer) }}" method="post">
                         @csrf
-                        <input type="submit" value="エントリー" onclick="if(!confirm('エントリーしますか？')){return false};" class="w-full sm:w-40 bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">
+                        <input type="submit" value="エントリー" onclick="if(!confirm('エントリーしますか？')){return false};"
+                            class="w-full sm:w-40 bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">
                     </form>
                 @else
                     <form action="{{ route('job_offers.entries.destroy', [$jobOffer, $entry]) }}" method="post">
                         @csrf
                         @method('DELETE')
-                        <input type="submit" value="エントリー取消" onclick="if(!confirm('エントリーを取り消しますか？')){return false};" class="w-full sm:w-40 bg-gradient-to-r from-pink-500 to-purple-600 hover:bg-gradient-to-l hover:from-purple-500 hover:to-pink-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">
+                        <input type="submit" value="エントリー取消" onclick="if(!confirm('エントリーを取り消しますか？')){return false};"
+                            class="w-full sm:w-40 bg-gradient-to-r from-pink-500 to-purple-600 hover:bg-gradient-to-l hover:from-purple-500 hover:to-pink-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">
                     </form>
                 @endif
             @endif
-            @if (Auth::guard(CompanyConst::GUARD)->check() && Auth::guard(CompanyConst::GUARD)->user()->can('update', $jobOffer))
+            @if (Auth::guard(CompanyConst::GUARD)->check() &&
+                Auth::guard(CompanyConst::GUARD)->user()->can('update', $jobOffer))
                 <a href="{{ route('job_offers.edit', $jobOffer) }}"
                     class="bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 sm:mr-2 mb-2 sm:mb-0">編集</a>
             @endif
-            @if (Auth::guard(CompanyConst::GUARD)->check() && Auth::guard(CompanyConst::GUARD)->user()->can('delete', $jobOffer))
+            @if (Auth::guard(CompanyConst::GUARD)->check() &&
+                Auth::guard(CompanyConst::GUARD)->user()->can('delete', $jobOffer))
                 <form action="{{ route('job_offers.destroy', $jobOffer) }}" method="post" class="w-full sm:w-32">
                     @csrf
                     @method('DELETE')
@@ -56,5 +60,46 @@
                 </form>
             @endif
         </div>
+        @if (!empty($entries))
+            <hr>
+            <h2 class="flex justify-center font-bold text-lg my-4">エントリー一覧</h2>
+            <div class="">
+                <form method="post">
+                    @csrf
+                    @method('PATCH')
+                    <table class="min-w-full table-fixed text-center">
+                        <thead>
+                            <tr class="text-gray-700 ">
+                                <th class="w-1/5 px-4 py-2">氏名</th>
+                                <th class="w-1/5 px-4 py-2">エントリー日</th>
+                                <th class="w-1/5 px-4 py-2">ステータス</th>
+                                <th class="w-2/5 px-4 py-2"></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach ($entries as $e)
+                                <tr>
+                                    <td>{{ $e->user->name }}</td>
+                                    <td>{{ $e->created_at->format('Y-m-d') }}</td>
+                                    <td>{{ array_search($e->status, EntryConst::STATUS_LIST) }}</td>
+                                    <td>
+                                        <div class="flex flex-col sm:flex-row items-center sm:justify-end text-center">
+                                            <input type="submit" value="承認"
+                                                formaction="{{ route('job_offers.entries.approval', [$jobOffer, $e]) }}"
+                                                onclick="if(!confirm('承認しますか？')){return false};"
+                                                class="w-full sm:w-32 bg-gradient-to-r from-indigo-500 to-blue-600 hover:bg-gradient-to-l hover:from-blue-500 hover:to-indigo-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32">
+                                            <input type="submit" value="却下"
+                                                formaction="{{ route('job_offers.entries.reject', [$jobOffer, $e]) }}"
+                                                onclick="if(!confirm('却下しますか？')){return false};"
+                                                class="bg-gradient-to-r from-pink-500 to-purple-600 hover:bg-gradient-to-l hover:from-purple-500 hover:to-pink-600 text-gray-100 p-2 rounded-full tracking-wide font-semibold shadow-lg cursor-pointer transition ease-in duration-500 w-full sm:w-32 ml-2">
+                                        </div>
+                                    </td>
+                                </tr>
+                            @endforeach
+                        </tbody>
+                    </table>
+                </form>
+            </div>
+        @endif
     </div>
 </x-app-layout>

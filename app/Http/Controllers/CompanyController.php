@@ -13,13 +13,15 @@ class CompanyController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function dashboard()
+    public function dashboard(Request $request)
     {
+        $params = $request->query();
         $jobOffers = JobOffer::latest()
             ->with('entries')
             ->MyJobOffer()
+            ->searchStatus($params)
             ->paginate(5);
-
+        // dd($jobOffers);
         return view('auth.company.dashboard', compact('jobOffers'));
     }
 }

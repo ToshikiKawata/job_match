@@ -49,12 +49,22 @@ class JobOffer extends Model
 
         return $query;
     }
+
     public function scopeMyJobOffer(Builder $query)
     {
         $query->where(
             'company_id',
             Auth::guard(CompanyConst::GUARD)->user()->id
         );
+        // dd($query);
+
+        return $query;
+    }
+        public function scopeSearchStatus(Builder $query, $params)
+    {
+        if (isset($params['status'])) {
+            $query->where('status', $params['status']);
+        }
 
         return $query;
     }
